@@ -1,3 +1,8 @@
 application.yml 파일에 있는 데이터 가져오는 법
 1. Environment
 2. @Value 어노테이션 사용
+
+JPA가 하는 역할
+API에서 쿼리 없이 데이터베이스를 다를 수 있도록 지원해주는 도구
+
+Request -> Dto -> Entity(database)
