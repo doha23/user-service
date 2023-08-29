@@ -6,3 +6,14 @@ JPA가 하는 역할
 API에서 쿼리 없이 데이터베이스를 다를 수 있도록 지원해주는 도구
 
 Request -> Dto -> Entity(database)
+
+암호화 방식 : BCryptPasswordEncoder
+- Password를 해싱하기 위해 Bcrypt 알고리즘 사용
+- 랜덤 Salt를 부여하여 어러번 Hash를 적용한 암호화 방식
+- 같은 데이터여도 암호화된 데이터는 다르게 파싱됨.
+
+Bean 등록
+Spring 2,3 버전 -> xml에서 처리
+Spring 4 버전 -> 어노테이션으로 처리
+Spring Boot -> 초기에 기동할 수 있는 클래스를 제어할 수 있음
+
