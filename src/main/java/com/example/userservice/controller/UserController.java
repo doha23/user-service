@@ -4,6 +4,7 @@ import com.example.userservice.VO.Greeting;
 import com.example.userservice.VO.RequestUser;
 import com.example.userservice.VO.ResponseUser;
 import com.example.userservice.dto.UserDto;
+import com.example.userservice.jpa.UserEntity;
 import com.example.userservice.service.UserService;
 import com.netflix.discovery.converters.Auto;
 import org.modelmapper.ModelMapper;
@@ -14,8 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user-service")
 public class UserController {
     private Environment env;
     private UserService userService;
@@ -29,7 +33,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user-service/health_check")
+    @GetMapping("/health_check")
     public String status(){
         return String.format("It's Working in User Service on PORT %s", env.getProperty("local.server.port"));
     }
@@ -51,5 +55,26 @@ public class UserController {
         ResponseUser responserUser = mapper.map(userDto, ResponseUser.class);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responserUser);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserEntity> userList = userService.getUserByAll();
+
+        List<ResponseUser> result = new ArrayList<>();
+        userList.forEach(v -> {
+            result.add(new ModelMapper().map(v, ResponseUser.class));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable String userId) {
+        UserDto userDto = userService.getUserByUserId(userId);
+
+        ResponseUser returnValue = new ModelMapper().map(userDto, ResponseUser.class);
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnValue);
     }
 }
