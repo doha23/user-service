@@ -17,3 +17,6 @@ Spring 2,3 버전 -> xml에서 처리
 Spring 4 버전 -> 어노테이션으로 처리
 Spring Boot -> 초기에 기동할 수 있는 클래스를 제어할 수 있음
 
+RestApi
+같은 URI를 사용해도 HTTP Method가 다르면 하나의 URI를 가지고 다양한 기능을 할 수 있음.
+-> RestApi의 성숙도 모델 레벨 2
