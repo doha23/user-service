@@ -17,6 +17,6 @@ public class UserServiceApplication {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    } // 변환작업
 
 }
