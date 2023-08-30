@@ -26,3 +26,13 @@ RestApi를 사용하여 클라이언트에게 값을 반환하다보면 null값�
 
 Override : 이미 등록되어있는 것을 재정의 -> 구현하지 않아도 오류가 발생하지 않음.
 Implement : Interface에 있는것을 상속받아서 가져왔기 때문에 재정의를 해줘야지만 인스턴스화가 됨.
+
+
+로그인 처리 과정
+- Boot Application이 처음 기동이 되면서 Configuration과 관련있는 클래스들이 Bean으로 등록.
+- 사용자가 로그인을 시도하게 되면 AuthenticationFilter 클래스가 제일 먼저 실행.
+- 여기의 attempAuthentication() 메소드가 email과 password를 처리
+- 그 후 입력된 email과 password를 UsernamePasswordAuthenticationToken형태로 변경하여 사용
+- UserDetailService의 loadUserByUsername()메서드에서 findByEmail()을 이용해 데이터베이스의 Entity를 가져와 User로 변경해서 사용
+- 정상적으로 로그인이 완료된다면, AuthenticationFilter의 successfulAuthentication() 메소드에서 email을 이용하여 Database에서 유저의 상세정보를 가져옴
+- 가져온 UserId를 이용하여 jwt 토큰 생성 후 response의 Header값에 포함
