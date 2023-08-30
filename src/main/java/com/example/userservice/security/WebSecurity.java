@@ -1,34 +1,32 @@
 package com.example.userservice.security;
 
-
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurity {
+public class WebSecurity extends WebSecurityConfigurerAdapter {
+    // 권한
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.authorizeRequests().antMatchers("/users/**").permitAll();
+//        http.authorizeRequests().antMatchers("/users/**").permitAll();
+        http.authorizeRequests().antMatchers("/**")
+                .hasIpAddress("172.0.0.1")
+                .and()
+                .addFilter(getAuthenticationFilter());
 
-    private static final String[] WHITE_LIST = {
-            "/users/**",
-            "/**"
-    };
 
-    @Bean
-    protected SecurityFilterChain config(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-        http.authorizeRequests(authorize -> authorize
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
-                .anyRequest().authenticated()
-        );
-        return http.build();
+        http.headers().frameOptions().disable();
+    }
+
+    private AuthenticationFilter getAuthenticationFilter() throws Exception {
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+        authenticationFilter.setAuthenticationManager(authenticationManager());
+
+        return authenticationFilter;
     }
 }
