@@ -5,6 +5,8 @@ import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.jpa.UserEntity;
 import com.example.userservice.jpa.UserRepository;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
@@ -90,7 +93,13 @@ public class UserServiceImpl implements UserService {
         /**
          * Using a feignClient
          */
-        List<ResponseOrder> ordersList = orderServiceClient.getOrders(userId); // RestTemplate이 해야할 역할을 인터페이스에 메소드를 만들어 간단하게 처리
+        /* Feign exception handling */
+        List<ResponseOrder> ordersList = null;
+        try {
+            ordersList = orderServiceClient.getOrders(userId); // RestTemplate이 해야할 역할을 인터페이스에 메소드를 만들어 간단하게 처리
+        } catch (FeignException ex) {
+            log.error(ex.getMessage());
+        }
 
         userDto.setOrders(ordersList);
 
